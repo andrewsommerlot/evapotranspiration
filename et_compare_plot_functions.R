@@ -146,7 +146,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
     }
     plot(comp[, 2] ~ as.Date(comp[, 1]), type = "l", main = "Daily estimations of ET", 
          ylim = ylim, col = 2, xlab = "Year", ylab = "Estimated ET mm/day", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (i in 1:(Ncomp - 1)) {
       lines(comp[, i + 2] ~ as.Date(comp[, 1]), type = "o", 
@@ -168,7 +168,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
          main = "Non-exceedance probability of the daily ET", 
          xlim = c(0, 1), ylim = ylim, col = 2, xlab = "Non-exceedance probability", 
          ylab = "Estimated daily ET mm/day", cex.lab = 1.3, 
-         cex.main = 2.1, par(mar = c(5.1, 4.7, 4.7, 2.1)))
+         cex.main = 1, par(mar = c(5.1, 4.7, 4.7, 2.1)))
     for (k in 1:(Ncomp - 1)) {
       lines(sortcomp[, k + 2] ~ sortcomp[, Ncomp + 2], 
             type = "o", pch = ".", col = k + 2)
@@ -182,7 +182,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
                                                to = Ncomp + 1)), boxwex = 0.5, range = 0, main = "Box plot of the daily estimations of ET", 
             xlab = "", ylab = "Distribution of daily PET in mm", 
             show.names = FALSE, pars = list(ylim = ylim, cex.lab = 1.3, 
-                                            cex.main = 2.1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
+                                            cex.main = 1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
 #     legend("topright", inset = 0.01, c(paste(legtext[1:Ncomp])), 
 #            cex = (1), fill = c(seq(from = 2, to = Ncomp + 1)), 
 #            bty = "o")
@@ -283,7 +283,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
     }
     plot(comp[, 2] ~ as.yearmon(comp[, 1]), type = "l", main = "Monthly estimations of ET", 
          ylim = ylim, col = 2, xlab = "Year", ylab = "Monthly aggregations of estimated ET mm/month", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (i in 1:(Ncomp - 1)) {
       lines(comp[, i + 2] ~ as.yearmon(comp[, 1]), type = "o", 
@@ -305,7 +305,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
          main = "Non-exceedance probability of the monthly ET", 
          xlim = c(0, 1), ylim = ylim, col = 2, xlab = "Non-exceedance probability", 
          ylab = "Monthly aggregations of estimated ET mm/month", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (k in 1:(Ncomp - 1)) {
       lines(sortcomp[, k + 2] ~ sortcomp[, Ncomp + 2], 
@@ -320,7 +320,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
                                                to = Ncomp + 1)), main = "Box plot of the monthly estimations of ET", 
             boxwex = 0.5, range = 0, xlab = "", ylab = "Distribution of monthly PET in mm", 
             show.names = FALSE, pars = list(ylim = ylim, cex.lab = 1.3, 
-                                            cex.main = 2.1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
+                                            cex.main = 1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
 #     legend("topright", inset = 0.01, c(paste(legtext[1:Ncomp])), 
 #            cex = (1), fill = c(seq(from = 2, to = Ncomp + 1)), 
 #            bty = "o")
@@ -422,7 +422,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
     plot(comp[, 2] ~ floor(as.numeric(as.yearmon(comp[, 1]))), 
          type = "l", main = "Annual estimations of ET", ylim = ylim, 
          col = 2, xlab = "Year", ylab = "Annual aggregations of estimated ET mm/year", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (i in 1:(Ncomp - 1)) {
       lines(comp[, i + 2] ~ floor(as.numeric(as.yearmon(comp[, 
@@ -444,7 +444,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
          main = "Non-exceedance probability of the annual ET", 
          xlim = c(0, 1), ylim = ylim, col = 2, xlab = "Non-exceedance probability", 
          ylab = "Annual aggregations of estimated ET mm/year", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (k in 1:(Ncomp - 1)) {
       lines(sortcomp[, k + 2] ~ sortcomp[, Ncomp + 2], 
@@ -459,7 +459,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
                                                to = Ncomp + 1)), boxwex = 0.5, range = 0, main = "Box plot of the annual estimations of ET", 
             xlab = "", ylab = "Distribution of annual PET in mm", 
             show.names = FALSE, pars = list(ylim = ylim, cex.lab = 1.3, 
-                                            cex.main = 2.1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
+                                            cex.main = 1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
 #     legend("topright", inset = 0.01, c(paste(legtext[1:Ncomp])), 
 #            cex = (1), fill = c(seq(from = 2, to = Ncomp + 1)), 
 #            bty = "o")
@@ -546,7 +546,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
     }
     plot(comp[, 2] ~ unique(1:12), type = "l", main = "Monthly average ET", 
          ylim = ylim, col = 2, xlab = "Month", ylab = "Monthly averages of estimated daily ET mm/day", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (i in 1:(Ncomp - 1)) {
       lines(comp[, i + 2] ~ unique(1:12), type = "o", pch = ".", 
@@ -568,7 +568,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
          main = "Non-exceedance probability of the monthly average ET", 
          xlim = c(0, 1), ylim = ylim, col = 2, xlab = "Non-exceedance probability", 
          ylab = "Monthly averages of estimated daily ET mm/day", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (k in 1:(Ncomp - 1)) {
       lines(sortcomp[, k + 2] ~ sortcomp[, Ncomp + 2], 
@@ -583,7 +583,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
                                                to = Ncomp + 1)), boxwex = 0.5, range = 0, main = "Box plot of the monthly average ET", 
             xlab = "", ylab = "Distribution of monthly averaged PET in mm/day", 
             show.names = FALSE, pars = list(ylim = ylim, cex.lab = 1.3, 
-                                            cex.main = 2.1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
+                                            cex.main = 1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
 #     legend("topright", inset = 0.01, c(paste(legtext[1:Ncomp])), 
 #            cex = (1), fill = c(seq(from = 2, to = Ncomp + 1)), 
 #            bty = "o")
@@ -662,7 +662,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
     plot(comp[, 2] ~ floor(as.numeric(as.yearmon(time(results1$ET.Annual)))), 
          type = "l", main = "Annually average ET", ylim = ylim, 
          col = 2, xlab = "Month", ylab = "Annual averages of estimated daily ET mm/day", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (i in 1:(Ncomp - 1)) {
       lines(comp[, i + 2] ~ floor(as.numeric(as.yearmon(time(results1$ET.Annual)))), 
@@ -684,7 +684,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
          main = "Non-exceedance probability of the annual average ET", 
          xlim = c(0, 1), ylim = ylim, col = 2, xlab = "Non-exceedance probability", 
          ylab = "Annual averages of estimated daily ET mm/day", 
-         cex.lab = 1.3, cex.main = 2.1, par(mar = c(5.1, 4.7, 
+         cex.lab = 1.3, cex.main = 1, par(mar = c(5.1, 4.7, 
                                                     4.7, 2.1)))
     for (k in 1:(Ncomp - 1)) {
       lines(sortcomp[, k + 2] ~ sortcomp[, Ncomp + 2], 
@@ -699,7 +699,7 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
                                                to = Ncomp + 1)), boxwex = 0.5, range = 0, main = "Box plot of the annual average ET", 
             xlab = "", ylab = "Distribution ofannually averaged PET in mm/day", 
             show.names = FALSE, pars = list(ylim = ylim, cex.lab = 1.3, 
-                                            cex.main = 2.1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
+                                            cex.main = 1, par(mar = c(5.1, 4.7, 4.7, 2.1))))
 #     legend("topright", inset = 0.01, c(paste(legtext[1:Ncomp])), 
 #            cex = (1), fill = c(seq(from = 2, to = Ncomp + 1)), 
 #            bty = "o")
@@ -709,4 +709,37 @@ et_compare_all <- function (results1, results2, results3 = NULL, results4 = NULL
          cex = (1), fill = c(seq(from = 2, to = Ncomp + 1)), 
          bty = "o")
   par(ask = FALSE)
+}
+
+et_multi_plot <- function(one, two, three, four, five, six, seven, 
+                          ylim = c(NA, NA), type = 'Daily',
+                          Sdate = NULL, Edate = NULL) {
+  mx1 = max(one$ET.Daily)
+  mx2 = max(two$ET.Daily) 
+  mx3 = max(three$ET.Daily)
+  mx4 = max(four$ET.Daily)
+  mx5 = max(five$ET.Daily)
+  mx6 = max(six$ET.Daily)
+  mx7 = max(seven$ET.Daily)
+  
+  mn1 = min(one$ET.Daily)
+  mn2 = min(two$ET.Daily) 
+  mn3 = min(three$ET.Daily)
+  mn4 = min(four$ET.Daily)
+  mn5 = min(five$ET.Daily)
+  mn6 = min(six$ET.Daily)
+  mn7 = min(seven$ET.Daily)
+  
+  maxs = c(mx1, mx2, mx3, mx4, mx5, mx6, mx7)
+  mins = c(mn1, mn2, mn3, mn4, mn5, mn6, mn7)
+  
+  ymax = max(maxs)
+  ymin = min(mins)
+  
+  et_compare_all(one, two, three, four, five, six, seven,
+                 labs = c('', '', '', '', '', '', ''),
+                 Sdate = NULL, Edate = NULL,
+                 type = "Daily", ylim = c(ymin,ymax))
+  
+  
 }

@@ -69,11 +69,22 @@ devAskNewPage(FALSE)
 options(device.ask.default = FALSE)
 grDevices::devAskNewPage(ask=FALSE)
 
+source('et_compare_plot_functions.R')
 par(mfrow = c(2,2))
-et_compare_all(ab, bc, bs, ca, gg, hn, hs,
-             labs = c('', '', '', '', '', '', ''),
-             Sdate = NULL, Edate = NULL,
-             type = "Daily", ylim = c(-3,30))
+
+one <- pm
+two <- p
+three <- ca
+four <- gg
+five <- hn
+six <- hs
+seven <- jh
+
+et_multi_plot(one, two, three, four, five, six, seven, type = 'Daily') 
+
+dev.off()
+ETForcings(data, five, forcing = 'Tmax')
+
 
 ETComparison(jh, la, mk, ms, mb, p, pm,
              labs = c('', '', '', '', '', '', ''),
