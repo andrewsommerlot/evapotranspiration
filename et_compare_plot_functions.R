@@ -743,3 +743,30 @@ et_multi_plot <- function(one, two, three, four, five, six, seven,
   
   
 }
+
+et_multi_plot_3 <- function(one, two, three,
+                          ylim = c(NA, NA), type = 'Daily',
+                          Sdate = NULL, Edate = NULL) {
+  mx1 = max(one$ET.Daily)
+  mx2 = max(two$ET.Daily) 
+  mx3 = max(three$ET.Daily)
+
+  
+  mn1 = min(one$ET.Daily)
+  mn2 = min(two$ET.Daily) 
+  mn3 = min(three$ET.Daily)
+
+  
+  maxs = c(mx1, mx2, mx3)
+  mins = c(mn1, mn2, mn3)
+  
+  ymax = max(maxs)
+  ymin = min(mins)
+  
+  et_compare_all(one, two, three,
+                 labs = c('', '', ''),
+                 Sdate = NULL, Edate = NULL,
+                 type = "Daily", ylim = c(ymin,ymax))
+  
+  
+}
