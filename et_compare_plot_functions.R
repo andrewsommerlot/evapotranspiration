@@ -739,7 +739,7 @@ et_multi_plot <- function(one, two, three, four, five, six, seven,
   et_compare_all(one, two, three, four, five, six, seven,
                  labs = c('', '', '', '', '', '', ''),
                  Sdate = NULL, Edate = NULL,
-                 type = "Daily", ylim = c(ymin,ymax))
+                 type = type, ylim = c(ymin,ymax))
   
   
 }
@@ -765,8 +765,69 @@ et_multi_plot_3 <- function(one, two, three,
   
   et_compare_all(one, two, three,
                  labs = c('', '', ''),
-                 Sdate = NULL, Edate = NULL,
-                 type = "Daily", ylim = c(ymin,ymax))
+                 Sdate = Sdate, Edate = Edate,
+                 type = type, ylim = c(ymin,ymax))
   
   
 }
+
+et_multi_plot_mon <- function(one, two, three, four, five, six, seven, 
+                          ylim = c(NA, NA), type = 'Monthly',
+                          Sdate = NULL, Edate = NULL) {
+  mx1 = max(one$ET.Monthly)
+  mx2 = max(two$ET.Monthly) 
+  mx3 = max(three$ET.Monthly)
+  mx4 = max(four$ET.Monthly)
+  mx5 = max(five$ET.Monthly)
+  mx6 = max(six$ET.Monthly)
+  mx7 = max(seven$ET.Monthly)
+  
+  mn1 = min(one$ET.Monthly)
+  mn2 = min(two$ET.Monthly) 
+  mn3 = min(three$ET.Monthly)
+  mn4 = min(four$ET.Monthly)
+  mn5 = min(five$ET.Monthly)
+  mn6 = min(six$ET.Monthly)
+  mn7 = min(seven$ET.Monthly)
+  
+  maxs = c(mx1, mx2, mx3, mx4, mx5, mx6, mx7)
+  mins = c(mn1, mn2, mn3, mn4, mn5, mn6, mn7)
+  
+  ymax = max(maxs)
+  ymin = min(mins)
+  
+  et_compare_all(one, two, three, four, five, six, seven,
+                 labs = c('', '', '', '', '', '', ''),
+                 Sdate = NULL, Edate = NULL,
+                 type = type, ylim = c(ymin,ymax))
+  
+  
+}
+
+
+et_multi_plot_1 <- function(one,
+                            ylim = c(NA, NA), type = 'Daily',
+                            Sdate = NULL, Edate = NULL) {
+  mx1 = max(one$ET.Daily)
+
+  
+  
+  mn1 = min(one$ET.Daily)
+
+  
+  
+  maxs = mx1
+  mins = mn1
+  
+  ymax = max(maxs)
+  ymin = min(mins)
+  
+  et_compare_all(one,
+                 labs = c(''),
+                 Sdate = Sdate, Edate = Edate,
+                 type = type, ylim = c(ymin,ymax))
+  
+  
+}
+
+

@@ -82,6 +82,7 @@ df3 = merge(df2, base_hrs, by.x = 'year-month-day', by.y = 'date', all.x = TRUE)
 df4 = merge(df3, dpt_ave, by.x = 'year-month-day', by.y = 'date', all.x = TRUE)
 df4$wnd = base_wnd[96433:184104,5]
 df4$dpt = base_dpt[96433:184104,5]
+df4$rad = base_rad[96433:184104,5]
 df4$sdtemp = base_tmp$temperature.dC.[52585:140256]
 df4$julian = jday[52585:140256]
 
@@ -121,11 +122,46 @@ base_data = data.frame(Station.Numer = df3$seg,
                        Temp.subdaily = df4$sdtemp,
                        Tdew.subdaily = df4$dpt, 
                        RH.subdaily = rh(df4$tmin, df4$tmax, df4$dpt.day),
+                       Rs.subdaily = df4$rad/24,
                        n.daily = df3$nhrs,
-                       uz.subdaily = df4$wnd,
-                       Tmin.daily = df4$tmin,
-                       Tmax.daily = df4$tmax
+                       uz.subdaily = df4$wnd*0.44704
+                       #Tmin.daily = df4$tmin,
+                       #Tmax.daily = df4$tmax
                        )
+
+base_data_m10 = data.frame(Station.Numer = df3$seg,
+                       Year = df4$Year,
+                       Month = df4$Month,
+                       Day = df4$Day,
+                       Hour = df4$Hour,
+                       Julian = df4$julian,
+                       Temp.subdaily = df4$sdtemp - 10,
+                       Tdew.subdaily = df4$dpt, 
+                       RH.subdaily = rh(df4$tmin, df4$tmax, df4$dpt.day),
+                       Rs.subdaily = df4$rad/24,
+                       n.daily = df3$nhrs,
+                       uz.subdaily = df4$wnd*0.44704
+                       #Tmin.daily = df4$tmin,
+                       #Tmax.daily = df4$tmax
+)
+
+base_data_p10 = data.frame(Station.Numer = df3$seg,
+                           Year = df4$Year,
+                           Month = df4$Month,
+                           Day = df4$Day,
+                           Hour = df4$Hour,
+                           Julian = df4$julian,
+                           Temp.subdaily = df4$sdtemp + 10,
+                           Tdew.subdaily = df4$dpt, 
+                           RH.subdaily = rh(df4$tmin, df4$tmax, df4$dpt.day),
+                           Rs.subdaily = df4$rad/24,
+                           n.daily = df3$nhrs,
+                           uz.subdaily = df4$wnd*0.44704
+                           #Tmin.daily = df4$tmin,
+                           #Tmax.daily = df4$tmax
+)
+
+
 
 s25_data = data.frame(Station.Numer = df3$seg,
                        Year = df_25_1$Year,
@@ -136,10 +172,11 @@ s25_data = data.frame(Station.Numer = df3$seg,
                        Temp.subdaily = df_25_1$sdtemp,
                        Tdew.subdaily = df_25_1$dpt, 
                        RH.subdaily = rh(df_25_1$tmin.y, df_25_1$tmax.y, df_25_1$dpt.day),
+                       Rs.subdaily = df4$rad/24,
                        n.daily = df3$nhrs,
-                       uz.subdaily = df_25_1$wnd,
-                       Tmin.daily = df_25_1$tmin.y,
-                       Tmax.daily = df_25_1$tmax.y
+                       uz.subdaily = df_25_1$wnd*0.44704
+                       #Tmin.daily = df_25_1$tmin.y,
+                       #Tmax.daily = df_25_1$tmax.y
 )
 
 
@@ -152,37 +189,47 @@ s50_data = data.frame(Station.Numer = df3$seg,
                       Temp.subdaily = df_50_1$sdtemp,
                       Tdew.subdaily = df_50_1$dpt, 
                       RH.subdaily = rh(df_50_1$tmin.y, df_50_1$tmax.y, df_50_1$dpt.day),
+                      Rs.subdaily = df4$rad/24,
                       n.daily = df3$nhrs,
-                      uz.subdaily = df_50_1$wnd,
-                      Tmin.daily = df_50_1$tmin.y,
-                      Tmax.daily = df_50_1$tmax.y
+                      uz.subdaily = df_50_1$wnd*0.44704
+                      #Tmin.daily = df_50_1$tmin.y,
+                      #Tmax.daily = df_50_1$tmax.y
 )
 
 
 # update constants ..
-data("constants")
+data(constants)
 #  for mont county md
 constants$lat = 39.1287
 constants$lat_rad = 0.68292
 constants$as = 0.23        #(Roderick, 1999, page 181) 
 constants$bs = 0.5  # I left these for now, not sure if they are good or not ....
-constants$Elev = 137 # meters gaithersburg md
+constants$Elev = 107 # meters gaithersburg md
 constants$z = 10 # meters
 #skipping the constants for estimating sunshine hours from cloud cover, as sunshine hours are used as
   # input
 # ones for crae
-#constants$PA = left this as well ...
+constants$PA = 1183
 # skipping constant for Morton's procedure 
   
 base_input <- ReadInputs(base_data, constants,
                    stopmissing=c(1,1,1),
-                   timestep="subdaily"
-                   #interp_missing_days = TRUE,
-                   #interp_missing_entries = TRUE,
-                   #interp_abnormal = TRUE,
-                   #missing_method = "DoY average",
-                   #abnormal_method = "DoY average"
+                   timestep="subdaily",
+                   interp_missing_days = TRUE,
+                   interp_missing_entries = TRUE,
+                   interp_abnormal = TRUE,
+                   missing_method = "DoY average",
+                   abnormal_method = "DoY average"
                    )
+
+p10_input <- ReadInputs(base_data_p10, constants,
+                        stopmissing=c(1,1,1),
+                        timestep="subdaily") 
+
+m10_input <- ReadInputs(base_data_m10, constants,
+                        stopmissing=c(1,1,1),
+                        timestep="subdaily") 
+
 
 s25_input <- ReadInputs(s25_data, constants,
                          stopmissing=c(1,1,1),
@@ -202,8 +249,8 @@ bs = ET.BrutsaertStrickler(base_data, constants, ts="daily", solar="sunshine hou
 
 ca = ET.ChapmanAustralian(data, constants, ts="daily", PenPan= T, solar="sunshine hours", alpha=0.23)
 
-gg = ET.GrangerGray(data, constants, ts="daily", solar="sunshine hours",
-               windfunction_ver=1948, alpha=0.23)
+base_gg = ET.GrangerGray(base_input, constants, ts="daily", solar="data",
+               windfunction_ver=1956, alpha=0.23)
 
 
 #####################################################################################
@@ -211,28 +258,51 @@ gg = ET.GrangerGray(data, constants, ts="daily", solar="sunshine hours",
 
 base_hn = ET.Hamon(base_input, constants = NULL, ts="daily")
 base_hs = ET.HargreavesSamani(base_input, constants, ts="daily")
-base_jh = ET.JensenHaise(base_input, constants, ts="daily", solar="sunshine hours")
+base_jh = ET.JensenHaise(base_input, constants, ts="daily", solar="data")
 base_la = ET.Linacre(base_input, constants, ts="daily")
-base_mk = ET.Makkink(base_input, constants, ts="daily", solar="sunshine hours")
-base_pt = ET.PriestleyTaylor(base_input, constants, ts="daily", solar="sunshine hours", alpha=0.23)
-base_pm = ET.PenmanMonteith(base_input, constants, ts="daily", solar="sunshine hours", wind="yes", crop="short")
+base_mk = ET.Makkink(base_input, constants, ts="daily", solar="data")
+base_pt = ET.PriestleyTaylor(base_input, constants, ts="daily", solar="data", alpha=0.23)
+base_pm = ET.PenmanMonteith(base_input, constants, windfunction_ver=1956, ts="daily", solar="data", wind="yes", crop="short")
+base_bc = ET.BlaneyCriddle(base_input, constants, ts="daily", solar="sunshine hours", height = F)
 
 
 s25_hn = ET.Hamon(s25_input, constants = NULL, ts="daily")
 s25_hs = ET.HargreavesSamani(s25_input, constants, ts="daily")
-s25_jh = ET.JensenHaise(s25_input, constants, ts="daily", solar="sunshine hours")
+s25_jh = ET.JensenHaise(s25_input, constants, ts="daily", solar="data")
 s25_la = ET.Linacre(s25_input, constants, ts="daily")
-s25_mk = ET.Makkink(s25_input, constants, ts="daily", solar="sunshine hours")
-s25_pt = ET.PriestleyTaylor(s25_input, constants, ts="daily", solar="sunshine hours", alpha=0.23)
-s25_pm = ET.PenmanMonteith(s25_input, constants, ts="daily", solar="sunshine hours", wind="yes", crop="short")
+s25_mk = ET.Makkink(s25_input, constants, ts="daily", solar="data")
+s25_pt = ET.PriestleyTaylor(s25_input, constants, ts="daily", solar="data", alpha=0.23)
+s25_pm = ET.PenmanMonteith(s25_input, constants, ts="daily", solar="data", windfunction_ver=1956, wind="yes", crop="short")
+s25_bc = ET.BlaneyCriddle(s25_input, constants, ts="daily", solar="sunshine hours", height = F)
 
 s50_hn = ET.Hamon(s50_input, constants = NULL, ts="daily")
 s50_hs = ET.HargreavesSamani(s50_input, constants, ts="daily")
-s50_jh = ET.JensenHaise(s50_input, constants, ts="daily", solar="sunshine hours")
+s50_jh = ET.JensenHaise(s50_input, constants, ts="daily", solar="data")
 s50_la = ET.Linacre(s50_input, constants, ts="daily")
-s50_mk = ET.Makkink(s50_input, constants, ts="daily", solar="sunshine hours")
-s50_pt = ET.PriestleyTaylor(s50_input, constants, ts="daily", solar="sunshine hours", alpha=0.23)
-s50_pm = ET.PenmanMonteith(s50_input, constants, ts="daily", solar="sunshine hours", wind="yes", crop="short")
+s50_mk = ET.Makkink(s50_input, constants, ts="daily", solar="data")
+s50_pt = ET.PriestleyTaylor(s50_input, constants, ts="daily", solar="data", alpha=0.23)
+s50_pm = ET.PenmanMonteith(s50_input, constants, ts="daily", solar="data", wind="yes", crop="short")
+s50_bc = ET.BlaneyCriddle(s50_input, constants, ts="daily", solar="sunshine hours", height = F)
+
+m10_hn = ET.Hamon(m10_input, constants = NULL, ts="daily")
+m10_hs = ET.HargreavesSamani(m10_input, constants, ts="daily")
+m10_jh = ET.JensenHaise(m10_input, constants, ts="daily", solar="data")
+m10_la = ET.Linacre(m10_input, constants, ts="daily")
+m10_mk = ET.Makkink(m10_input, constants, ts="daily", solar="data")
+m10_pt = ET.PriestleyTaylor(m10_input, constants, ts="daily", solar="data", alpha=0.23)
+m10_pm = ET.PenmanMonteith(m10_input, constants, ts="daily", solar="data", wind="yes", crop="short")
+m10_bc = ET.BlaneyCriddle(m10_input, constants, ts="daily", solar="sunshine hours", height = F)
+
+
+p10_hn = ET.Hamon(p10_input, constants = NULL, ts="daily")
+p10_hs = ET.HargreavesSamani(p10_input, constants, ts="daily")
+p10_jh = ET.JensenHaise(p10_input, constants, ts="daily", solar="data")
+p10_la = ET.Linacre(p10_input, constants, ts="daily")
+p10_mk = ET.Makkink(p10_input, constants, ts="daily", solar="data")
+p10_pt = ET.PriestleyTaylor(p10_input, constants, ts="daily", solar="data", alpha=0.23)
+p10_pm = ET.PenmanMonteith(p10_input, constants, ts="daily", solar="data", wind="yes", crop="short")
+p10_bc = ET.BlaneyCriddle(p10_input, constants, ts="daily", solar="sunshine hours", height = F)
+
 
 ######################################################################################################
 
@@ -246,8 +316,14 @@ mb = ET.McGuinnessBordne(data, constants, ts="daily")
 #mcw = ET.MortonCRWE(data, constants, ts="monthly", est="potential ET",
 #                    solar="sunshine hours", Tdew= T, alpha = NULL)
 
-p = ET.Penman(data, constants, ts="daily", solar="sunshine hours",
-               wind="yes", windfunction_ver=1948, alpha = 0.08, z0 = 0.001)
+base_p = ET.Penman(base_input, constants, ts="daily", solar="sunshine hours",
+               wind="yes", windfunction_ver=1956, alpha = 0.7, z0 = 0.4)
+
+s25_p = ET.Penman(s25_input, constants, ts="daily", solar="sunshine hours",
+              wind="yes", windfunction_ver=1956, alpha = 0.7, z0 = 0.4)
+
+s50_p = ET.Penman(s50_input, constants, ts="daily", solar="sunshine hours",
+              wind="yes", windfunction_ver=1956, alpha = 0.7, z0 = 0.4)
 
 pm = ET.PenmanMonteith(data, constants, ts="daily", solar="sunshine hours", wind="yes", crop="short")
 
@@ -276,13 +352,20 @@ one <- base_hn
 two <- base_hs
 three <- base_jh
 four <- base_la
-five <- base_mk
+five <- base_bc
 six <- base_pt
 seven <- base_pm
 
-et_multi_plot(two, seven, one, four, five, six, three, type = 'Daily') 
+et_multi_plot(two, seven, one, four, five, six, three, type = 'Monthly') 
 
-et_multi_plot_3(two, seven, one, type = 'Daily') 
+et_multi_plot_mon(two, seven, one, four, five, six, three, type = 'Monthly') 
+
+
+et_multi_plot_3(seven, seven, seven, type = 'Daily', Sdate = '1992-01-01', Edate = '1992-12-31') 
+
+et_multi_plot_1(seven, type = 'Daily', Sdate = '1992-01-01', Edate = '1992-12-31') 
+
+
 
 one <- s25_hn
 two <- s25_hs
@@ -309,6 +392,19 @@ et_multi_plot(two, seven, one, four, five, six, three, type = 'Daily')
 et_multi_plot_3(two, seven, one, type = 'Daily') 
 
 
+one <- base_hn
+two <- s25_hn
+three <- s50_hn
+four <- base_pm
+five <- s25_pm
+six <- s50_pm
+seven <- base_jh
+
+et_multi_plot(one, two, three, four, five, six, seven, type = 'Daily') 
+
+et_multi_plot_3(four, five, six, type = 'Daily') 
+
+
 
 dev.off()
 
@@ -316,14 +412,16 @@ dev.off()
 library(ggplot2)
 library(reshape2)
 hamon_aa = data.frame(year = seq(1991, 2000), base = base_hn$ET.AnnualAve[1:10], s25 =  s25_hn$ET.AnnualAve[1:10], s50 = s50_hn$ET.AnnualAve[1:10])
-h_melt = melt(hamon_aa, id = 1)
 
 har_aa = data.frame(year = seq(1991, 2000), base = base_hs$ET.AnnualAve[1:10], s25 =  s25_hs$ET.AnnualAve[1:10], s50 = s50_hs$ET.AnnualAve[1:10])
-har_melt = melt(har_aa, id = 1)
 
 pm_aa = data.frame(year = seq(1991, 2000), base = base_pm$ET.AnnualAve[1:10], s25 =  s25_pm$ET.AnnualAve[1:10], s50 = s50_pm$ET.AnnualAve[1:10])
-pm_melt = melt(pm_aa, id = 1)
 
+bc_aa = data.frame(year = seq(1991, 2000), base = base_bc$ET.AnnualAve[1:10], s25 =  s25_bc$ET.AnnualAve[1:10], s50 = s50_bc$ET.AnnualAve[1:10])
+
+pt_aa = data.frame(year = seq(1991, 2000), base = base_pt$ET.AnnualAve[1:10], s25 =  s25_pt$ET.AnnualAve[1:10], s50 = s50_pt$ET.AnnualAve[1:10])
+
+jh_aa = data.frame(year = seq(1991, 2000), base = base_jh$ET.AnnualAve[1:10], s25 =  s25_jh$ET.AnnualAve[1:10], s50 = s50_jh$ET.AnnualAve[1:10])
 
 
 all_comp = data.frame(year = h_melt$year,
@@ -368,21 +466,130 @@ pm_s50_ave = mean(pm_aa$s50)
 
 penman_change = c(pm_base_ave, pm_s25_ave, pm_s50_ave)
 
+bc_base_ave = mean(bc_aa$base)
+bc_s25_ave = mean(bc_aa$s25)
+bc_s50_ave = mean(bc_aa$s50)
+
+bc_change = c(bc_base_ave, bc_s25_ave, bc_s50_ave)
+
+pt_base_ave = mean(pt_aa$base)
+pt_s25_ave = mean(pt_aa$s25)
+pt_s50_ave = mean(pt_aa$s50)
+
+pt_change = c(pt_base_ave, pt_s25_ave, pt_s50_ave)
+
+jh_base_ave = mean(jh_aa$base)
+jh_s25_ave = mean(jh_aa$s25)
+jh_s50_ave = mean(jh_aa$s50)
+
+jh_change = c(jh_base_ave, jh_s25_ave, jh_s50_ave)
+
+
 comp_line = data.frame(scenario = as.factor(c('base', 's25', 's50')),
                        hamon = hamon_change, 
                        hargraves = hargraves_change,
-                       penman = penman_change
+                       penman = penman_change, 
+                       bcriddle = bc_change, 
+                       prestaylor = pt_change,
+                       jenhies = jh_change
+                       
   )
 
 melt_line = melt(comp_line, 1)
 
+theme_set(theme_gray(base_size = 18))
 
 ggplot(data=melt_line, aes(x=scenario, y=value, group=variable, color=variable))+ 
   geom_line() + ylab('average annual pet mm/day')
 
+
+
+
+
+##### plus minus thing ... ... 
+
+hamon_aa = data.frame(year = seq(1991, 2000), base = base_hn$ET.AnnualAve[1:10], p10 =  p10_hn$ET.AnnualAve[1:10], m10 = m10_hn$ET.AnnualAve[1:10])
+
+har_aa = data.frame(year = seq(1991, 2000), base = base_hs$ET.AnnualAve[1:10], p10 =  p10_hs$ET.AnnualAve[1:10], m10 = m10_hs$ET.AnnualAve[1:10])
+
+pm_aa = data.frame(year = seq(1991, 2000), base = base_pm$ET.AnnualAve[1:10], p10 =  p10_pm$ET.AnnualAve[1:10], m10 = m10_pm$ET.AnnualAve[1:10])
+
+bc_aa = data.frame(year = seq(1991, 2000), base = base_bc$ET.AnnualAve[1:10], p10 =  p10_bc$ET.AnnualAve[1:10], m10 = m10_bc$ET.AnnualAve[1:10])
+
+pt_aa = data.frame(year = seq(1991, 2000), base = base_pt$ET.AnnualAve[1:10], p10 =  p10_pt$ET.AnnualAve[1:10], m10 = m10_pt$ET.AnnualAve[1:10])
+
+jh_aa = data.frame(year = seq(1991, 2000), base = base_jh$ET.AnnualAve[1:10], p10 =  p10_jh$ET.AnnualAve[1:10], m10 = m10_jh$ET.AnnualAve[1:10])
+
+
+
+
+hamon_base_ave = mean(hamon_aa$base)
+hamon_p10_ave = mean(hamon_aa$p10)
+hamon_m10_ave = mean(hamon_aa$m10)
+
+hamon_change = c((hamon_m10_ave - hamon_base_ave)/hamon_base_ave, 0, (hamon_p10_ave- hamon_base_ave)/hamon_base_ave)
+
+har_base_ave = mean(har_aa$base)
+har_p10_ave = mean(har_aa$p10)
+har_m10_ave = mean(har_aa$m10)
+
+hargraves_change = c((har_m10_ave - har_base_ave)/har_base_ave, 0, (har_p10_ave- har_base_ave)/har_base_ave)
+
+
+pm_base_ave = mean(pm_aa$base)
+pm_p10_ave = mean(pm_aa$p10)
+pm_m10_ave = mean(pm_aa$m10)
+
+penman_change = c((pm_m10_ave - pm_base_ave)/pm_base_ave, 0, (pm_p10_ave- pm_base_ave)/pm_base_ave)
+
+
+bc_base_ave = mean(bc_aa$base)
+bc_p10_ave = mean(bc_aa$p10)
+bc_m10_ave = mean(bc_aa$m10)
+
+bc_change = c((bc_m10_ave - bc_base_ave)/bc_base_ave, 0, (bc_p10_ave- bc_base_ave)/bc_base_ave)
+
+pt_base_ave = mean(pt_aa$base)
+pt_p10_ave = mean(pt_aa$p10)
+pt_m10_ave = mean(pt_aa$m10)
+
+pt_change = c((pt_m10_ave - pt_base_ave)/pt_base_ave, 0, (pt_p10_ave- pt_base_ave)/pt_base_ave)
+
+
+jh_base_ave = mean(jh_aa$base)
+jh_p10_ave = mean(jh_aa$p10)
+jh_m10_ave = mean(jh_aa$m10)
+
+jh_change = c((jh_m10_ave - jh_base_ave)/jh_base_ave, 0, (jh_p10_ave- jh_base_ave)/jh_base_ave)
+
+
+comp_line = data.frame(scenario = as.factor(c('1_minus_10', '2_zero', '3_plus_10')),
+                       hamon = hamon_change, 
+                       hargraves = hargraves_change,
+                       penman = penman_change, 
+                       bcriddle = bc_change, 
+                       prestaylor = pt_change,
+                       jenhies = jh_change
+                       
+)
+
+melt_line = melt(comp_line, 1)
+
+theme_set(theme_gray(base_size = 18))
+
+ggplot(data=melt_line, aes(x=scenario, y=value, group=variable, color=variable))+ 
+  geom_line() + ylab('Relative % Change')
+
+
+
+
+
+
+
+
 ETForcings(base_input, one, forcing = 'Tmax')
 ETForcings(base_input, two, forcing = 'Tmax')
-ETForcings(base_input, three, forcing = 'Tmax')
+ETForcings(base_input, seven, forcing = 'Tmax')
 ETForcings(base_input, four, forcing = 'Tmax')
 ETForcings(base_input, five, forcing = 'Tmax')
 ETForcings(base_input, six, forcing = 'Tmax')
@@ -401,4 +608,4 @@ ETComparison(pp, pt, r, sj, t,
 
 
 
-
+delta_t = 
