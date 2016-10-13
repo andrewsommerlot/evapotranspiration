@@ -1,4 +1,6 @@
 library(Evapotranspiration)
+library(ggplot2)
+library(reshape2)
 data(climatedata)
 data(constants)
 data(defaultconstants)
@@ -124,9 +126,9 @@ base_data = data.frame(Station.Numer = df3$seg,
                        RH.subdaily = rh(df4$tmin, df4$tmax, df4$dpt.day),
                        Rs.subdaily = df4$rad/24,
                        n.daily = df3$nhrs,
-                       uz.subdaily = df4$wnd*0.44704
-                       #Tmin.daily = df4$tmin,
-                       #Tmax.daily = df4$tmax
+                       uz.subdaily = df4$wnd*0.44704,
+                       Tmin.daily = df4$tmin,
+                       Tmax.daily = df4$tmax
                        )
 
 base_data_m10 = data.frame(Station.Numer = df3$seg,
@@ -171,12 +173,12 @@ s25_data = data.frame(Station.Numer = df3$seg,
                        Julian = df_25_1$julian,
                        Temp.subdaily = df_25_1$sdtemp,
                        Tdew.subdaily = df_25_1$dpt, 
-                       RH.subdaily = rh(df_25_1$tmin.y, df_25_1$tmax.y, df_25_1$dpt.day),
+                       RH.subdaily = rh(df_25_1$tmin.y, df_25_1$tmax.y, df_25_1$dpt.day + df_25_1$tmax.y - df4$tmax),
                        Rs.subdaily = df4$rad/24,
                        n.daily = df3$nhrs,
-                       uz.subdaily = df_25_1$wnd*0.44704
-                       #Tmin.daily = df_25_1$tmin.y,
-                       #Tmax.daily = df_25_1$tmax.y
+                       uz.subdaily = df_25_1$wnd*0.44704,
+                       Tmin.daily = df_25_1$tmin.y,
+                       Tmax.daily = df_25_1$tmax.y
 )
 
 
@@ -188,12 +190,12 @@ s50_data = data.frame(Station.Numer = df3$seg,
                       Julian = df_50_1$julian,
                       Temp.subdaily = df_50_1$sdtemp,
                       Tdew.subdaily = df_50_1$dpt, 
-                      RH.subdaily = rh(df_50_1$tmin.y, df_50_1$tmax.y, df_50_1$dpt.day),
+                      RH.subdaily = rh(df_50_1$tmin.y, df_50_1$tmax.y, df_50_1$dpt.day+ df_50_1$tmax.y - df4$tmax),
                       Rs.subdaily = df4$rad/24,
                       n.daily = df3$nhrs,
-                      uz.subdaily = df_50_1$wnd*0.44704
-                      #Tmin.daily = df_50_1$tmin.y,
-                      #Tmax.daily = df_50_1$tmax.y
+                      uz.subdaily = df_50_1$wnd*0.44704,
+                      Tmin.daily = df_50_1$tmin.y,
+                      Tmax.daily = df_50_1$tmax.y
 )
 
 
@@ -356,7 +358,7 @@ five <- base_bc
 six <- base_pt
 seven <- base_pm
 
-et_multi_plot(two, seven, one, four, five, six, three, type = 'Monthly') 
+et_multi_plot(two, seven, one, four, five, six, three, type = 'Daily') 
 
 et_multi_plot_mon(two, seven, one, four, five, six, three, type = 'Monthly') 
 
@@ -409,8 +411,7 @@ et_multi_plot_3(four, five, six, type = 'Daily')
 dev.off()
 
 #plot some of my own
-library(ggplot2)
-library(reshape2)
+
 hamon_aa = data.frame(year = seq(1991, 2000), base = base_hn$ET.AnnualAve[1:10], s25 =  s25_hn$ET.AnnualAve[1:10], s50 = s50_hn$ET.AnnualAve[1:10])
 
 har_aa = data.frame(year = seq(1991, 2000), base = base_hs$ET.AnnualAve[1:10], s25 =  s25_hs$ET.AnnualAve[1:10], s50 = s50_hs$ET.AnnualAve[1:10])
@@ -437,14 +438,6 @@ ggplot(all_melt) +
   geom_boxplot(aes(x=scenario, y=value, color = variable)) +
   ylab('average annual pet mm/day')
 
-
-
-
-ggplot(har_melt) + 
-  geom_boxplot(aes(x=variable, y=value, color = variable))
-
-ggplot(pm_melt) + 
-  geom_boxplot(aes(x=variable, y=value, color = variable))
 
 
 
@@ -502,8 +495,62 @@ theme_set(theme_gray(base_size = 18))
 ggplot(data=melt_line, aes(x=scenario, y=value, group=variable, color=variable))+ 
   geom_line() + ylab('average annual pet mm/day')
 
+############ milly for real 
+hamon_base_ave = mean(hamon_aa$base)
+hamon_s50_ave = mean(hamon_aa$s50)
+hamon_s25_ave = mean(hamon_aa$s25)
+
+hamon_change = c(0, ( hamon_s25_ave - hamon_base_ave)/hamon_base_ave, (hamon_s50_ave- hamon_base_ave)/hamon_base_ave)
+
+har_base_ave = mean(har_aa$base)
+har_s50_ave = mean(har_aa$s50)
+har_s25_ave = mean(har_aa$s25)
+
+hargraves_change = c(0, ( har_s25_ave - har_base_ave)/har_base_ave,  (har_s50_ave- har_base_ave)/har_base_ave)
 
 
+pm_base_ave = mean(pm_aa$base)
+pm_s50_ave = mean(pm_aa$s50)
+pm_s25_ave = mean(pm_aa$s25)
+
+penman_change = c(0, ( pm_s25_ave - pm_base_ave)/pm_base_ave, (pm_s50_ave- pm_base_ave)/pm_base_ave)
+
+
+bc_base_ave = mean(bc_aa$base)
+bc_s50_ave = mean(bc_aa$s50)
+bc_s25_ave = mean(bc_aa$s25)
+
+bc_change = c(0, ( bc_s25_ave - bc_base_ave)/bc_base_ave, (bc_s50_ave- bc_base_ave)/bc_base_ave)
+
+pt_base_ave = mean(pt_aa$base)
+pt_s50_ave = mean(pt_aa$s50)
+pt_s25_ave = mean(pt_aa$s25)
+
+pt_change = c(0, ( pt_s25_ave - pt_base_ave)/pt_base_ave, (pt_s50_ave - pt_base_ave)/pt_base_ave)
+
+
+jh_base_ave = mean(jh_aa$base)
+jh_s50_ave = mean(jh_aa$s50)
+jh_s25_ave = mean(jh_aa$s25)
+
+jh_change = c(0, ( jh_s25_ave - jh_base_ave)/jh_base_ave, (jh_s50_ave- jh_base_ave)/jh_base_ave)
+
+comp_line = data.frame(scenario = as.factor(c('base', 's25', 's50')),
+                       hamon = hamon_change, 
+                       hargraves = hargraves_change,
+                       penman = penman_change, 
+                       bcriddle = bc_change, 
+                       prestaylor = pt_change,
+                       jenhies = jh_change
+                       
+)
+
+melt_line = melt(comp_line, 1)
+
+theme_set(theme_gray(base_size = 18))
+
+ggplot(data=melt_line, aes(x=scenario, y=value, group=variable, color=variable))+ 
+  geom_line() + ylab('relative % change')
 
 
 ##### plus minus thing ... ... 
