@@ -198,15 +198,25 @@ base_hs = ET.HargreavesSamani(base_input, constants, ts="daily")
 s25_hn = ET.Hamon(s25_input, constants = NULL, ts="daily")
 s25_hs = ET.HargreavesSamani(s25_input, constants, ts="daily")
 
-### make output files  
+### make output files
 
-hm_out = base_tmp[52585:140256,c(2,3,4,5,7)]
-hs_out = base_tmp[52585:140256,c(2,3,4,5,7)]
+# make new base 
+new_base = base_tmp[52585:140256,c(2,3,4,5,7)]
+
+new_base$month = formatC(new_base$month, width = 2)
+new_base$day = formatC(new_base$day, width = 2)
+new_base$hour = formatC(new_base$hour, width = 2)
+
+
+hm_out = new_base
+hs_out = new_base
 
 # wash negetives 
 
 base_hn$ET.Daily[base_hn$ET.Daily < 0] <- 0.01
 base_hs$ET.Daily[base_hs$ET.Daily < 0] <- 0.01
+s25_hn$ET.Daily[base_hn$ET.Daily < 0] <- 0.01
+s25_hs$ET.Daily[base_hs$ET.Daily < 0] <- 0.01
 
 # get fraction  
 
@@ -221,6 +231,7 @@ hm_merge = merge(hm_out, hm_frac_merge, by = 'date', all.x = TRUE)
 hm_merge$date = NULL
 hm_merge$hamon.change = hm_merge$pot.et.in. *  hm_merge$hamon.change
 hm_merge$pot.et.in. = NULL
+hm_merge$hamon.change = formatC(hm_merge$hamon.change, width = 10, digits = 8, format = 'f')
 
 hs_out_agg = tidyr::unite_(hs_out, paste(colnames(hs_out)[c(1,2,3)], collapse="-"), colnames(hs_out)[c(1,2,3)])
 hs_out_agg[,1] = as.Date(gsub('_', '-', hs_out_agg[,1]))
@@ -230,7 +241,7 @@ hs_merge = merge(hs_out, hs_frac_merge, by = 'date', all.x = TRUE)
 hs_merge$date = NULL
 hs_merge$hargraves.change = hs_merge$pot.et.in. *  hs_merge$hargraves.change
 hs_merge$pot.et.in. = NULL
-
+hs_merge$hargraves.change = formatC(hs_merge$hargraves.change, width = 10, digits = 8, format = 'f')
 
 # write out the CSVs 
 
