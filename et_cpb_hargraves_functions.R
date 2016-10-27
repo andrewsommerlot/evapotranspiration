@@ -139,10 +139,10 @@ make_hargraves_file = function(land_seg,
   base_rad <- read.csv(paste(read_loc, '/', land_seg, '.RAD', sep = ''), head = FALSE)
 
   # get min/max
-  base_tmp_ag <- tidyr::unite_(base_tmp, paste(colnames(base_tmp)[c(1,2,3)], collapse="-"), colnames(base_tmp)[c(2,3,4)])
+  base_tmp_ag <- tidyr::unite_(base_tmp, paste(colnames(base_tmp)[c(1,2,3)], collapse="-"), colnames(base_tmp)[c(1,2,3)])
   base_tmp_ag[,1] <- as.Date(gsub('_', '-', base_tmp_ag[,1]))
-  st <- which(base_tmp_ag$`year-month-day` == start_date)[1]
-  ed <- which(base_tmp_ag$`year-month-day` == end_date)[length(which(base_tmp_ag$`year-month-day` == end_date))]
+  st <- which(base_tmp_ag$`V1-V2-V3` == start_date)[1]
+  ed <- which(base_tmp_ag$`V1-V2-V3` == end_date)[length(which(base_tmp_ag$`V1-V2-V3` == end_date))]
   base_tmp_ag <- base_tmp_ag[st:ed,]
 
   # get sunshine hours from solar radiation data.
@@ -161,27 +161,22 @@ make_hargraves_file = function(land_seg,
   base_hrs = data.frame(date = base_rad_hrs[,1], nhrs = base_rad_hrs[,2] )
 
   # for julian day ..
-  jday <- as.POSIXlt(base_tmp_ag[,2], format = "%d%b%y")$yday
+  jday <- as.POSIXlt(base_tmp_ag$`V1-V2-V3`, format = "%d%b%y")$yday
 
   df1 <- base_tmp_ag
-  df1$Year <- base_tmp[,2]
-  df1$Month <- base_tmp[,3]
-  df1$Day <- base_tmp[,4]
-  df1$Hour <- base_tmp[,5]
-  df1$hour <- NULL
-  df1$temperature.dC. <- NULL
-  df1$pot.et.in. <- NULL
+  df1$Year <- as.numeric(format(base_tmp_ag$`V1-V2-V3`, '%Y'))
+  df1$Month <- as.numeric(format(base_tmp_ag$`V1-V2-V3`, '%m'))
+  df1$Day <- as.numeric(format(base_tmp_ag$`V1-V2-V3`, '%d'))
+  df1$Hour <- base_tmp_ag$V4
 
-  df2 <- merge(df1, base_hrs, by.x = 'year-month-day', by.y = 'date', all.x <- TRUE)
+  df2 <- merge(df1, base_hrs, by.x = 'V1-V2-V3', by.y = 'date', all.x <- TRUE)
   df2$rad <- base_rad_ag[,3]
-  df2$sdtemp <- base_tmp_ag$temperature.dC.
+  df2$sdtemp <- base_tmp_ag$V5
   df2$julian <- jday
 
   # requries RH.subdaily, and Tdew. dummy values added below
-
   # get it in final form matching the evapo library .........
-  base_data <- data.frame(Station.Numer = df2$seg,
-                         Year = df2$Year,
+  base_data <- data.frame(Year = df2$Year,
                          Month = df2$Month,
                          Day = df2$Day,
                          Hour = df2$Hour,
@@ -217,17 +212,18 @@ make_hargraves_file = function(land_seg,
   daily_rad <- aggregate.data.frame(base_rad_ag[,3], by = list(base_rad_ag[,1]), FUN = sum)
   rad_ag <- merge(base_rad_ag, daily_rad, by.x = 'V1-V2-V3', by.y = 'Group.1', all.x = TRUE)
   rad_ag <- merge(rad_ag, har_out, by.x = 'V1-V2-V3', by.y = 'date', all.x = TRUE)
-  rad_ag$hourly.pet = rad_ag$pet*(rad_ag$V5/rad_ag$x)
+  rad_ag$hourly.pet = rad_ag$pet*(rad_ag$V5/rad_ag$x) / 25.4
 
   month <- as.numeric(format(rad_ag$`V1-V2-V3`, '%m'))
   day <- as.numeric(format(rad_ag$`V1-V2-V3`, '%d'))
   year <- as.numeric(format(rad_ag$`V1-V2-V3`, '%Y'))
-
+  hour = rad_ag$V4
   specify_decimal <- function(x, k) format(round(x, k), nsmall=k)
 
   har_print <- data.frame(year = year,
                          month = month,
                          day = day,
+                         hour = hour,
                          pet = specify_decimal(rad_ag$hourly.pet, 10)
   )
 
@@ -240,7 +236,7 @@ make_hargraves_file = function(land_seg,
     dir.create(tpath)
   }
 
-  write.csv(har_print, path, quote = FALSE)
+  write.table(har_print, path, quote = FALSE, row.names = FALSE, col.names = FALSE, sep = ",")
   cat(paste('File written to:', path))
 
   return(0)

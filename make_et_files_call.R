@@ -33,9 +33,9 @@ elevation = 130
 latitude = 37.12
 read_loc = '~/Desktop/evapotranspiration/et_data/base' # set to proper location
 save_loc = '~/Desktop/evapotranspiration/output' # set to proper location
-start_date = '1985-01-01'
-end_date = '2011-12-31'
-method = 'bhatt'
+start_date = '1991-01-01'
+end_date = '2000-12-31'
+method = 'empirical'
 
 # write the et file according to CPB format
 output = make_hargraves_file(land_seg = land_seg,
