@@ -135,12 +135,12 @@ make_hargraves_file = function(land_seg,
   require(tidyr)
   data(constants)
 
-  base_tmp <- read.csv(paste(read_loc, '/', land_seg, '.TMP', sep = ''))
+  base_tmp <- read.csv(paste(read_loc, '/', land_seg, '.TMP', sep = ''), head = FALSE)
   base_rad <- read.csv(paste(read_loc, '/', land_seg, '.RAD', sep = ''), head = FALSE)
 
   # get min/max
-  base_tmp_ag <- tidyr::unite_(base_tmp, paste(colnames(base_tmp)[c(2,3,4)], collapse="-"), colnames(base_tmp)[c(2,3,4)])
-  base_tmp_ag[,2] <- as.Date(gsub('_', '-', base_tmp_ag[,2]))
+  base_tmp_ag <- tidyr::unite_(base_tmp, paste(colnames(base_tmp)[c(1,2,3)], collapse="-"), colnames(base_tmp)[c(2,3,4)])
+  base_tmp_ag[,1] <- as.Date(gsub('_', '-', base_tmp_ag[,1]))
   st <- which(base_tmp_ag$`year-month-day` == start_date)[1]
   ed <- which(base_tmp_ag$`year-month-day` == end_date)[length(which(base_tmp_ag$`year-month-day` == end_date))]
   base_tmp_ag <- base_tmp_ag[st:ed,]
